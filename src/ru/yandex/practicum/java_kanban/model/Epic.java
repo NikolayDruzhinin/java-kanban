@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private List<Subtask> subtasks;
+    private final List<Subtask> subtasks;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -38,7 +38,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                "subtasksIds=" + subtasks.stream().map(Subtask::getId).collect(Collectors.toList()) +
+                "subtasksIds=" + subtasks.stream().map(Subtask::getId).toList() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +

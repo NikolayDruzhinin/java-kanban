@@ -8,7 +8,7 @@ public class Task {
     protected String description;
     protected TaskStatus status;
     protected long id;
-    private static AtomicLong idCounter = new AtomicLong(0);
+    private static final AtomicLong idCounter = new AtomicLong(0);
 
     @Override
     public String toString() {
@@ -24,14 +24,6 @@ public class Task {
         this.description = description;
         this.status = TaskStatus.NEW;
         id = idCounter.incrementAndGet();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public void setStatus(TaskStatus status) {

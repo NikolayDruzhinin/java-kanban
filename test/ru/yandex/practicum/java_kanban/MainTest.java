@@ -1,6 +1,5 @@
 package ru.yandex.practicum.java_kanban;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,9 +9,8 @@ import ru.yandex.practicum.java_kanban.model.Task;
 import ru.yandex.practicum.java_kanban.model.TaskStatus;
 import ru.yandex.practicum.java_kanban.service.TaskManager;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MainTest {
     private Task task1;
@@ -86,6 +84,9 @@ public class MainTest {
         subtask3.setStatus(TaskStatus.DONE);
         assertEquals(subtask3.getStatus(), TaskStatus.DONE);
         assertEquals(epic2.getStatus(), TaskStatus.DONE);
+
+        subtask2.setEpic(epic2);
+        assertEquals(epic2.getStatus(), TaskStatus.IN_PROGRESS);
     }
 
     @Test
@@ -100,8 +101,8 @@ public class MainTest {
         assertEquals(0, epic2.getSubtasks().size());
 
         taskManager.removeById(epic1.getId());
-        assertEquals(null, taskManager.getTask(epic1.getId()));
+        assertNull(taskManager.getTask(epic1.getId()));
         taskManager.removeById(epic2.getId());
-        assertEquals(null, taskManager.getTask(epic2.getId()));
+        assertNull(taskManager.getTask(epic2.getId()));
     }
 }
