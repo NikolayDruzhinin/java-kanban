@@ -1,14 +1,12 @@
 package ru.yandex.practicum.java_kanban.model;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Task {
     protected String name;
     protected String description;
     protected TaskStatus status;
     protected long id;
-    private static final AtomicLong idCounter = new AtomicLong(0);
 
     @Override
     public String toString() {
@@ -19,11 +17,14 @@ public class Task {
                 '}';
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
-        id = idCounter.incrementAndGet();
     }
 
     public void setStatus(TaskStatus status) {
@@ -38,6 +39,22 @@ public class Task {
         return id;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,6 +67,4 @@ public class Task {
     public int hashCode() {
         return Objects.hashCode(id);
     }
-
-
 }

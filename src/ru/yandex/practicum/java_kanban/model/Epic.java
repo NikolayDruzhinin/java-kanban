@@ -12,7 +12,16 @@ public class Epic extends Task {
     }
 
     public List<Subtask> getSubtasks() {
-        return subtasks;
+        return new ArrayList<>(subtasks);
+    }
+
+    public Subtask getSubtask(long id) {
+        for (Subtask subtask : subtasks) {
+            if (subtask.getId() == id) {
+                return subtask;
+            }
+        }
+        return null;
     }
 
     public void removeSubtask(Subtask subtask) {
@@ -23,13 +32,26 @@ public class Epic extends Task {
         subtasks.add(subtask);
     }
 
+    public void removeSubtasks() {
+        subtasks.forEach(Subtask::nullifyEpic);
+        subtasks.clear();
+    }
+
     public void updateStatus() {
-        long subtasksNew = subtasks.stream().filter(subtask -> subtask.getStatus() == TaskStatus.NEW).count();
-        long subtasksDone = subtasks.stream().filter(subtask -> subtask.getStatus() == TaskStatus.DONE).count();
-        if (subtasksDone == subtasks.size()) {
-            status = TaskStatus.DONE;
-        } else if (subtasksNew == subtasks.size()) {
+        long subtasksNew = 0;
+        long subtasksDone = 0;
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStatus() == TaskStatus.NEW) {
+                subtasksNew++;
+            } else if (subtask.getStatus() == TaskStatus.DONE) {
+                subtasksDone++;
+            }
+        }
+
+        if (subtasks.isEmpty() || subtasksNew == subtasks.size()) {
             status = TaskStatus.NEW;
+        } else  if (subtasksDone == subtasks.size()) {
+            status = TaskStatus.DONE;
         } else {
             status = TaskStatus.IN_PROGRESS;
         }

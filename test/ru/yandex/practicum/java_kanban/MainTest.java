@@ -25,8 +25,10 @@ public class MainTest {
 
     @BeforeEach
     public void setup() {
-        taskManager = TaskManager.getInstance();
-        taskManager.clearData();
+        taskManager = new TaskManager();
+        taskManager.removeTasks();
+        taskManager.removeSubtasks();
+        taskManager.removeEpics();
         task1 = new Task("Task1", "Description1");
         task2 = new Task("Task2", "Description2");
         epic1 = new Epic("Epic1", "EpicDescription1");
@@ -36,29 +38,29 @@ public class MainTest {
         subtask3 = new Subtask("Subtask2", "SubtaskDescription2", epic2);
         taskManager.createTask(task1);
         taskManager.createTask(task2);
-        taskManager.createTask(epic1);
-        taskManager.createTask(epic2);
-        taskManager.createTask(subtask1);
-        taskManager.createTask(subtask2);
-        taskManager.createTask(subtask3);
+        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic2);
+        taskManager.createSubtask(subtask1);
+        taskManager.createSubtask(subtask2);
+        taskManager.createSubtask(subtask3);
     }
 
     @Test
     @DisplayName("Get tasks list test")
     public void testTasksList() {
-        assertEquals(2, taskManager.getTasks(Task.class).size());
+        assertEquals(2, taskManager.getTasks().size());
     }
 
     @Test
     @DisplayName("Get subtasks list test")
     public void testSubtasksList() {
-        assertEquals(3, taskManager.getTasks(Subtask.class).size());
+        assertEquals(3, taskManager.getSubtasks().size());
     }
 
     @Test
     @DisplayName("Get epic tasks list test")
     public void testEpicsList() {
-        assertEquals(2, taskManager.getTasks(Epic.class).size());
+        assertEquals(2, taskManager.getEpics().size());
     }
 
     @Test
@@ -92,17 +94,24 @@ public class MainTest {
     @Test
     @DisplayName("Remove tasks test")
     public void removeTasksTest() {
-        taskManager.removeTasks(Task.class);
-        assertEquals(0, taskManager.getTasks(Task.class).size());
+        taskManager.removeTasks();
+        assertEquals(0, taskManager.getTasks().size());
 
-        taskManager.removeTasks(Subtask.class);
-        assertEquals(0, taskManager.getTasks(Subtask.class).size());
-        assertEquals(0, epic1.getSubtasks().size());
-        assertEquals(0, epic2.getSubtasks().size());
+        subtask1.setStatus(TaskStatus.IN_PROGRESS);
+        subtask2.setStatus(TaskStatus.DONE);
+        assertEquals(epic1.getStatus(), TaskStatus.IN_PROGRESS);
 
-        taskManager.removeById(epic1.getId());
-        assertNull(taskManager.getTask(epic1.getId()));
-        taskManager.removeById(epic2.getId());
-        assertNull(taskManager.getTask(epic2.getId()));
+        taskManager.removeSubtask(subtask1.getId());
+        assertNull(subtask1.getEpic());
+        assertNull(epic1.getSubtask(subtask1.getId()));
+        assertEquals(epic1.getStatus(), TaskStatus.DONE);
+
+        taskManager.removeSubtask(subtask2.getId());
+        assertNull(subtask2.getEpic());
+        assertNull(epic1.getSubtask(subtask2.getId()));
+        assertEquals(epic1.getStatus(), TaskStatus.NEW);
+
+        taskManager.removeEpic(epic2.getId());
+        assertNull(taskManager.getEpic(epic2.getId()));
     }
 }
