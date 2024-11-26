@@ -114,4 +114,40 @@ public class MainTest {
         taskManager.removeEpic(epic2.getId());
         assertNull(taskManager.getEpic(epic2.getId()));
     }
+
+    @Test
+    @DisplayName("Update epic test")
+    public void updateEpicTest() {
+        String newName = "epic1 new name";
+        epic1.setName(newName);
+        String newDescription = "epic1 new description";
+        epic1.setDescription(newDescription);
+        taskManager.updateEpic(epic1);
+        assertEquals(newName, taskManager.getEpic(epic1.getId()).getName());
+        assertEquals(newDescription, taskManager.getEpic(epic1.getId()).getDescription());
+    }
+
+    @Test
+    @DisplayName("Update task test")
+    public void updateTaskTest() {
+        String newName = "task1 new name";
+        task1.setName(newName);
+        String newDescription = "task1 new description";
+        task1.setDescription(newDescription);
+        taskManager.updateTask(task1);
+        assertEquals(newName, taskManager.getTask(task1.getId()).getName());
+        assertEquals(newDescription, taskManager.getTask(task1.getId()).getDescription());
+    }
+
+    @Test
+    @DisplayName("Update subtask test")
+    public void updateSubtaskTest() {
+        String newName = "subtask1 new name";
+        subtask1.setName(newName);
+        String newDescription = "subtask1 new description";
+        subtask1.setDescription(newDescription);
+        taskManager.updateTask(subtask1);
+        assertEquals(newName, taskManager.getSubtask(subtask1.getId()).getName());
+        assertEquals(newDescription, taskManager.getSubtask(subtask1.getId()).getDescription());
+    }
 }
