@@ -4,6 +4,7 @@ import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.model.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +24,15 @@ public class TaskManager {
     }
 
     public List<Task> getTasks() {
-        return tasks.values().stream().toList();
+        return new ArrayList<>(tasks.values().stream().toList());
     }
 
     public List<Subtask> getSubtasks() {
-        return subtasks.values().stream().toList();
+        return new ArrayList<>(subtasks.values().stream().toList());
     }
 
     public List<Epic> getEpics() {
-        return epics.values().stream().toList();
+        return new ArrayList<>(epics.values().stream().toList());
     }
 
     public Task getTask(long id) {
