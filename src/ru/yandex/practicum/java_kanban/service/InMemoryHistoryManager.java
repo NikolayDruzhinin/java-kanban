@@ -14,6 +14,7 @@ public class InMemoryHistoryManager<T extends Task> extends InMemoryTaskManager<
     private final Deque<T> taskHistory;
 
     public InMemoryHistoryManager() {
+        super();
         taskHistory = new ArrayDeque<>();
     }
 
