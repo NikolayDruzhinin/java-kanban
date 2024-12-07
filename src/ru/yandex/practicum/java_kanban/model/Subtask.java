@@ -1,6 +1,6 @@
 package ru.yandex.practicum.java_kanban.model;
 
-public class Subtask extends Task{
+public class Subtask extends Task {
     private Epic epic;
 
     public Subtask(String name, String description, Epic epic) {
@@ -8,6 +8,16 @@ public class Subtask extends Task{
         this.epic = epic;
         epic.addSubtask(this);
         epic.updateStatus();
+    }
+
+    public Subtask(String name, String description, Epic epic, long id) {
+        this(name, description, epic);
+        this.id = id;
+    }
+
+    public Subtask(Subtask subtask) {
+        super(subtask);
+        this.epic = new Epic(subtask.epic);
     }
 
     @Override

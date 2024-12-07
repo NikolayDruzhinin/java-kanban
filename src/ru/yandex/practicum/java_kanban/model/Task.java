@@ -11,6 +11,7 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
+                "id=" + id + '\'' +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
@@ -25,6 +26,19 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
+    }
+
+    public Task(String name, String description, long id) {
+        this(name, description);
+        this.id = id;
+    }
+
+    public Task(Task task) {
+        this.name = task.name;
+        this.description = task.description;
+        this.status = task.status;
+        this.id = task.id;
+
     }
 
     public void setStatus(TaskStatus status) {
