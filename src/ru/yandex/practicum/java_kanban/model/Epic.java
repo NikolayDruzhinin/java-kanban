@@ -1,6 +1,7 @@
 package ru.yandex.practicum.java_kanban.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Epic extends Task {
@@ -18,8 +19,7 @@ public class Epic extends Task {
 
     public Epic(Epic epic) {
         super(epic);
-        subtasks = new ArrayList<>();
-        epic.subtasks.forEach(subtask -> subtasks.add(new Subtask(subtask)));
+        subtasks = List.copyOf(epic.subtasks);
     }
 
     public List<Subtask> getSubtasks() {

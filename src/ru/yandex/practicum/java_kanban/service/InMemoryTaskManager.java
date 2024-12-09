@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
+    Logger logger = Logger.getLogger(InMemoryTaskManager.class.getName());
     protected final Map<Long, T> tasks;
     protected final AtomicLong idCounter;
 
@@ -21,24 +23,33 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
     @Override
     public List<Task> getTasks() {
-        return new ArrayList<>(tasks.values().stream()
-                .filter(task -> !(task instanceof Epic || task instanceof Subtask)).toList());
+        return (List<Task>) tasks.values().stream()
+                .filter(task -> !(task instanceof Epic || task instanceof Subtask)).toList();
     }
 
     @Override
-    public List<T> getSubtasks() {
-        return new ArrayList<>(tasks.values().stream().filter(task -> task instanceof Subtask).toList());
+    public List<Subtask> getSubtasks() {
+        return (List<Subtask>) tasks.values().stream().filter(task -> task instanceof Subtask).toList();
     }
 
     @Override
-    public List<T> getEpics() {
-        return new ArrayList<>(tasks.values().stream().filter(task -> task instanceof Epic).toList());
+    public List<Epic> getEpics() {
+        return (List<Epic>) tasks.values().stream().filter(task -> task instanceof Epic).toList();
     }
 
     @Override
     public T getTask(long id) {
         if (tasks.containsKey(id)) {
             return tasks.get(id);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Subtask> getEpicSubtasks(long id) {
+        T epic = tasks.get(id);
+        if (epic instanceof Epic) {
+            return new ArrayList<>(((Epic) epic).getSubtasks());
         }
         return null;
     }
@@ -82,12 +93,37 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         if (task.getId() == 0) {
             task.setId(idCounter.incrementAndGet());
         }
-        updateTask(task);
+        tasks.put(task.getId(), task);
     }
 
     @Override
-    public void updateTask(T task) {
-        tasks.put(task.getId(), task);
+    public void updateTask(Task t) {
+        long id = t.getId();
+        if (tasks.containsKey(id) && tasks.get(id).getClass() == Task.class) {
+            tasks.put(id, (T) t);
+        } else {
+            logger.warning("Can't update task, task with id = " + id + " not exists");
+        }
+    }
+
+    @Override
+    public void updateSubtask(Subtask t) {
+        long id = t.getId();
+        if (tasks.containsKey(id) && tasks.get(id).getClass() == Subtask.class) {
+            tasks.put(id, (T) t);
+        } else {
+            logger.warning("Can't update subtask, subtask with id = " + id + " not exists");
+        }
+    }
+
+    @Override
+    public void updateEpic(Epic t) {
+        long id = t.getId();
+        if (tasks.containsKey(id) && tasks.get(id).getClass() == Epic.class) {
+            tasks.put(id, (T) t);
+        } else {
+            logger.warning("Can't update epic, epic with id = " + id + " not exists");
+        }
     }
 
 }

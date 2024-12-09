@@ -64,7 +64,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void updateTaskStatusTest() {
+    public void updateStatusTest() {
         task1.setStatus(TaskStatus.IN_PROGRESS);
         task2.setStatus(TaskStatus.DONE);
         assertEquals(task1.getStatus(), TaskStatus.IN_PROGRESS);
@@ -120,7 +120,7 @@ public class InMemoryTaskManagerTest {
         epic1.setName(newName);
         String newDescription = "epic1 new description";
         epic1.setDescription(newDescription);
-        inMemoryTaskManager.updateTask(epic1);
+        inMemoryTaskManager.updateEpic(epic1);
         assertEquals(newName, inMemoryTaskManager.getTask(epic1.getId()).getName());
         assertEquals(newDescription, inMemoryTaskManager.getTask(epic1.getId()).getDescription());
     }
@@ -142,7 +142,7 @@ public class InMemoryTaskManagerTest {
         subtask1.setName(newName);
         String newDescription = "subtask1 new description";
         subtask1.setDescription(newDescription);
-        inMemoryTaskManager.updateTask(subtask1);
+        inMemoryTaskManager.updateSubtask(subtask1);
         assertEquals(newName, inMemoryTaskManager.getTask(subtask1.getId()).getName());
         assertEquals(newDescription, inMemoryTaskManager.getTask(subtask1.getId()).getDescription());
     }

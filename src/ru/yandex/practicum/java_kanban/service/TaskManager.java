@@ -1,5 +1,7 @@
 package ru.yandex.practicum.java_kanban.service;
 
+import ru.yandex.practicum.java_kanban.model.Epic;
+import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.model.Task;
 
 import java.util.List;
@@ -7,11 +9,13 @@ import java.util.List;
 public interface TaskManager<T extends Task> {
     List<Task> getTasks();
 
-    List<T> getSubtasks();
+    List<Subtask> getSubtasks();
 
-    List<T> getEpics();
+    List<Epic> getEpics();
 
     T getTask(long id);
+
+    List<Subtask> getEpicSubtasks(long id);
 
     void removeTasks();
 
@@ -23,5 +27,9 @@ public interface TaskManager<T extends Task> {
 
     void createTask(T t);
 
-    void updateTask(T t);
+    void updateTask(Task t);
+
+    void updateSubtask(Subtask t);
+
+    void updateEpic(Epic t);
 }
