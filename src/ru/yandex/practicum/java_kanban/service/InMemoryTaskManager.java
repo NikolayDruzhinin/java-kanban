@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
-    Logger logger = Logger.getLogger(InMemoryTaskManager.class.getName());
+    private Logger logger = Logger.getLogger(InMemoryTaskManager.class.getName());
     protected final Map<Long, T> tasks;
     protected final AtomicLong idCounter;
 
@@ -39,10 +39,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
     @Override
     public T getTask(long id) {
-        if (tasks.containsKey(id)) {
-            return tasks.get(id);
-        }
-        return null;
+        return tasks.get(id);
     }
 
     @Override
