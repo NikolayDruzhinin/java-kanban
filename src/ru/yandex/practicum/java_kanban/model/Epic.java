@@ -69,11 +69,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
-                "subtasksIds=" + subtasks.stream().map(Subtask::getId).toList() +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return "Epic{" + "subtasksIds=" + subtasks.stream().map(Subtask::getId).toList() + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status=" + status + '}';
     }
 }
