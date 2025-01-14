@@ -28,21 +28,20 @@ public class CustomLinkedList<T extends Task> {
     }
 
     public void linkLast(T task) {
-        Node node;
         if (ids.containsKey(task.getId())) {
-            replaceNode(task);
-        } else {
-            if (head == null) {
-                node = new Node(null, task, null);
-                head = node;
-            } else {
-                node = new Node(tail, task, null);
-                tail.next = node;
-            }
-            tail = node;
-            ids.put(task.getId(), node);
-            ++size;
+            remove(task.getId());
         }
+        Node node;
+        if (head == null) {
+            node = new Node(null, task, null);
+            head = node;
+        } else {
+            node = new Node(tail, task, null);
+            tail.next = node;
+        }
+        tail = node;
+        ids.put(task.getId(), node);
+        ++size;
     }
 
     private void replaceNode(T task) {
@@ -97,8 +96,6 @@ public class CustomLinkedList<T extends Task> {
                 nodeToRemove.prev.next = nodeToRemove.next;
                 nodeToRemove.next.prev = nodeToRemove.prev;
             }
-            nodeToRemove.prev = null;
-            nodeToRemove.next = null;
             ids.remove(id);
             --size;
         }

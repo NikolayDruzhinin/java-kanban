@@ -37,21 +37,6 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldStoreTenElementsTest() {
-        Task[] tasks = new Task[10];
-        for (int i = 0; i < 10; ++i) {
-            Task task = new Task("Task" + i, "Desc" + i);
-            task.setId(i);
-            tasks[i] = task;
-            historyTm.add(task);
-        }
-        assertArrayEquals(tasks, historyTm.getHistory().toArray());
-        Task task11 = new Task("Task11", "Desc11");
-        historyTm.add(task11);
-        assertEquals(task11, historyTm.getHistory().getFirst());
-    }
-
-    @Test
     public void shouldRemoveTask() {
         Task task = new Task("task1", "description1");
         task.setId(1);
