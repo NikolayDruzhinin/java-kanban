@@ -1,7 +1,6 @@
 package ru.yandex.practicum.java_kanban.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Epic extends Task {
@@ -70,11 +69,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
-                "subtasksIds=" + subtasks.stream().map(Subtask::getId).toList() +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return "Epic{" + "subtasksIds=" + subtasks.stream().map(Subtask::getId).toList() + ", name='" + name + '\'' + ", description='" + description + '\'' + ", status=" + status + '}';
     }
 }
