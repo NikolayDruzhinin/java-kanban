@@ -9,7 +9,6 @@ import ru.yandex.practicum.java_kanban.model.TaskStatus;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {

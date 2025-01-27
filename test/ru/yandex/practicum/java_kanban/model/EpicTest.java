@@ -7,7 +7,7 @@ import ru.yandex.practicum.java_kanban.util.Managers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTest {
-    private static final TaskManager taskManager = Managers.getDefault();
+    private static final TaskManager taskManager = Managers.getDefaultInMemoryManager();
 
     @Test
     public void areEqualEpicsSameIdTest() {

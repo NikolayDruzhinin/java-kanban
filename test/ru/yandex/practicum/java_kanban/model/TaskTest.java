@@ -10,7 +10,7 @@ public class TaskTest {
 
     @Test
     public void shouldBeEqualTaskSameIdTest() {
-        TaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = Managers.getDefaultInMemoryManager();
         Task task1 = new Task("Task1", "Desc1");
         taskManager.createTask(task1);
         Task task2 = taskManager.getTask(task1.getId());
