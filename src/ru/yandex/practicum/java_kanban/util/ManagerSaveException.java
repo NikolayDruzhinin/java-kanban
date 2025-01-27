@@ -1,6 +1,6 @@
 package ru.yandex.practicum.java_kanban.util;
 
-public class ManagerSaveException extends RuntimeException{
+public class ManagerSaveException extends RuntimeException {
     public ManagerSaveException(final String msg) {
         super(msg);
     }
