@@ -3,6 +3,12 @@ package ru.yandex.practicum.java_kanban.model;
 public class Subtask extends Task {
     private Epic epic;
 
+    @Override
+    public String toCsv() {
+        String csvString = super.toCsv();
+        return csvString + "," + epic.getId();
+    }
+
     public Subtask(String name, String description, Epic epic) {
         super(name, description);
         this.epic = epic;

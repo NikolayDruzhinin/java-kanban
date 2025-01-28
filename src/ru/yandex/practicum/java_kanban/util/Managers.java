@@ -10,31 +10,28 @@ import java.nio.file.Paths;
 public class Managers {
     private static final HistoryManager historyManager = new InMemoryHistoryManager();
     private static final TaskManager inMemoryTaskManager = new InMemoryTaskManager();
-    private static TaskManager fileManager;
+    private static TaskManager fileBackedTaskManager;
 
     private Managers() {
     }
 
-    public static TaskManager getDefaultFileManager() {
+    public static TaskManager getDefaultFileBackedTaskManager() {
         Path path = Paths.get("defaultFileManagerTest.txt");
-        return getFileManager(path);
+        return getFileBackedTaskManager(path);
     }
 
-    public static TaskManager getCustomFileManager(Path path) {
-        return getFileManager(path);
+    public static TaskManager getCustomFileBackedTaskManager(Path path) {
+        return getFileBackedTaskManager(path);
     }
 
-    private static TaskManager getFileManager(Path path) {
+    private static TaskManager getFileBackedTaskManager(Path path) {
         try {
-            if (!Files.exists(path)) {
-                fileManager = new FileBackedTaskManager(Files.createFile(path));
-            } else {
-                fileManager = new FileBackedTaskManager(path);
-            }
+            fileBackedTaskManager = Files.exists(path) ? new FileBackedTaskManager(path) :
+                    new FileBackedTaskManager(Files.createFile(path));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return fileManager;
+        return fileBackedTaskManager;
     }
 
     public static TaskManager getDefaultInMemoryManager() {

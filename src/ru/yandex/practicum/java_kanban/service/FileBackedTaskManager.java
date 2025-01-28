@@ -1,6 +1,7 @@
 package ru.yandex.practicum.java_kanban.service;
 
 import ru.yandex.practicum.java_kanban.model.*;
+import ru.yandex.practicum.java_kanban.util.DeserializationException;
 import ru.yandex.practicum.java_kanban.util.ManagerSaveException;
 
 import java.io.*;
@@ -30,40 +31,40 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
             while ((tmpLine = br.readLine()) != null) {
                 T task = deserializeObject(tmpLine);
                 tasks.put(task.getId(), task);
+                if (idCounter.get() >= task.getId()) {
+                    idCounter.set(task.getId());
+                }
             }
         } catch (Exception e) {
             throw new ManagerSaveException(e.getMessage(), e.getCause());
         }
     }
 
-    public T deserializeObject(String line) {
+    private T deserializeObject(String line) {
         String[] data = line.split(",");
         long id = Long.parseLong(data[0]);
-        TaskType taskType = TaskType.fromString(data[1]);
+        TaskType taskType = TaskType.valueOf(data[1]);
         String name = data[2];
-        TaskStatus taskStatus = TaskStatus.fromString(data[3]);
+        TaskStatus taskStatus = TaskStatus.valueOf(data[3]);
         String description = data[4];
-        T t;
-        switch (taskType) {
-            case SUBTASK -> {
+        T resultTusk = switch (taskType) {
+            case SUBTASK: {
                 Long epicId = Long.parseLong(data[5]);
-                Epic epic;
-                if (tasks.containsKey(epicId)) {
-                    epic = (Epic) tasks.get(epicId);
-                } else {
-                    epic = new Epic("epic", "description", epicId);
-                }
+                Epic epic = tasks.containsKey(epicId) ? (Epic) tasks.get(epicId) : new Epic(name, description, epicId);
                 Subtask subtask = new Subtask(name, description, epic, id);
-                t = (T) subtask;
+                yield (T) subtask;
             }
-            case EPIC -> t = (T) new Epic(name, description, id);
-            case TASK -> t = (T) new Task(name, description, id);
-            default -> {
-                return null;
+            case EPIC:
+                yield (T) new Epic(name, description, id);
+
+            case TASK: {
+                yield (T) new Task(name, description, id);
             }
-        }
-        t.setStatus(taskStatus);
-        return t;
+            default:
+                throw new DeserializationException("Unknown task type: " + taskType);
+        };
+        resultTusk.setStatus(taskStatus);
+        return resultTusk;
     }
 
     private void save() {
@@ -75,22 +76,8 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
                 bw.write("id,type,name,status,description,epic");
                 bw.newLine();
                 StringBuilder sb = new StringBuilder();
-                T tmp;
                 for (Map.Entry<Long, T> entry : tasks.entrySet()) {
-                    tmp = entry.getValue();
-                    sb.append(entry.getKey());
-                    sb.append(",");
-                    sb.append(TaskType.fromString(tmp.getClass().getSimpleName()));
-                    sb.append(",");
-                    sb.append(tmp.getName());
-                    sb.append(",");
-                    sb.append(tmp.getStatus());
-                    sb.append(",");
-                    sb.append(tmp.getDescription());
-                    if (tmp instanceof Subtask) {
-                        sb.append(",");
-                        sb.append(((Subtask) tmp).getEpic().getId());
-                    }
+                    sb.append(entry.getValue().toCsv());
                     sb.append("\n");
                 }
                 bw.write(sb.toString());

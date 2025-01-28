@@ -20,21 +20,21 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
     @BeforeEach
     @Override
     public void setup() {
-        taskManager = Managers.getDefaultFileManager();
+        taskManager = Managers.getDefaultFileBackedTaskManager();
         super.setup();
     }
 
     @Test
     public void emptyFileLoadTest() {
         Path path = Paths.get("emptyFileTest.txt");
-        taskManager = Managers.getCustomFileManager(path);
+        taskManager = Managers.getCustomFileBackedTaskManager(path);
         assertEquals(taskManager.getTasks().size(), 0);
     }
 
     @Test
     public void saveSomeTasksTest() throws IOException {
         Path path = Paths.get("saveSomeTasksTest.txt");
-        taskManager = Managers.getCustomFileManager(path);
+        taskManager = Managers.getCustomFileBackedTaskManager(path);
         Task task = new Task("t1", "d1");
         taskManager.createTask(task);
         Epic epic = new Epic("e1", "d2");
@@ -46,7 +46,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             String[] taskData = br.readLine().split(",");
             Long id = Long.parseLong(taskData[0]);
             String name = taskData[2];
-            TaskStatus taskStatus = TaskStatus.fromString(taskData[3]);
+            TaskStatus taskStatus = TaskStatus.valueOf(taskData[3]);
             String description = taskData[4];
             assertEquals(task.getId(), id);
             assertEquals(task.getName(), name);
@@ -56,7 +56,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             taskData = br.readLine().split(",");
             id = Long.parseLong(taskData[0]);
             name = taskData[2];
-            taskStatus = TaskStatus.fromString(taskData[3]);
+            taskStatus = TaskStatus.valueOf(taskData[3]);
             description = taskData[4];
             assertEquals(epic.getId(), id);
             assertEquals(epic.getName(), name);
@@ -66,7 +66,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             taskData = br.readLine().split(",");
             id = Long.parseLong(taskData[0]);
             name = taskData[2];
-            taskStatus = TaskStatus.fromString(taskData[3]);
+            taskStatus = TaskStatus.valueOf(taskData[3]);
             description = taskData[4];
             Long epicId = Long.parseLong(taskData[5]);
             assertEquals(subtask.getId(), id);
