@@ -1,6 +1,5 @@
 package ru.yandex.practicum.java_kanban.model;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class Task {
