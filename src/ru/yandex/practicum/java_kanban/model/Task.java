@@ -81,4 +81,18 @@ public class Task {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public String toCsv() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id);
+        sb.append(",");
+        sb.append(TaskType.valueOf(getClass().getSimpleName().toUpperCase()));
+        sb.append(",");
+        sb.append(name);
+        sb.append(",");
+        sb.append(status);
+        sb.append(",");
+        sb.append(description);
+        return sb.toString();
+    }
 }
