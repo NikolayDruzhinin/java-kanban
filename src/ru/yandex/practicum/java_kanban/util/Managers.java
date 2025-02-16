@@ -11,13 +11,13 @@ public class Managers {
     private static final HistoryManager historyManager = new InMemoryHistoryManager();
     private static final TaskManager inMemoryTaskManager = new InMemoryTaskManager();
     private static TaskManager fileBackedTaskManager;
+    public final static Path PATH = Paths.get("defaultFileManagerTest.txt");
 
     private Managers() {
     }
 
     public static TaskManager getDefaultFileBackedTaskManager() {
-        Path path = Paths.get("defaultFileManagerTest.txt");
-        return getFileBackedTaskManager(path);
+        return getFileBackedTaskManager(PATH);
     }
 
     public static TaskManager getCustomFileBackedTaskManager(Path path) {

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.java_kanban.service;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
@@ -11,17 +11,22 @@ import ru.yandex.practicum.java_kanban.util.Managers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
-    @BeforeEach
-    @Override
-    public void setup() {
+public class FileBackedTaskManagerTest extends TaskManagerTest {
+
+    public FileBackedTaskManagerTest() {
         taskManager = Managers.getDefaultFileBackedTaskManager();
-        super.setup();
+    }
+
+    @AfterEach
+    public void clearFile() throws IOException {
+        Files.delete(Managers.PATH);
+        Files.createFile(Managers.PATH);
     }
 
     @Test
@@ -68,7 +73,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             name = taskData[2];
             taskStatus = TaskStatus.valueOf(taskData[3]);
             description = taskData[4];
-            Long epicId = Long.parseLong(taskData[5]);
+            Long epicId = Long.parseLong(taskData[taskData.length - 1]);
             assertEquals(subtask.getId(), id);
             assertEquals(subtask.getName(), name);
             assertEquals(subtask.getDescription(), description);

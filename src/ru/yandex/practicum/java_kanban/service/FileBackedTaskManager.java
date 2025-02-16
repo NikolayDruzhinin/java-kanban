@@ -2,18 +2,17 @@ package ru.yandex.practicum.java_kanban.service;
 
 import ru.yandex.practicum.java_kanban.model.*;
 import ru.yandex.practicum.java_kanban.util.DeserializationException;
+import ru.yandex.practicum.java_kanban.util.IntersectionException;
 import ru.yandex.practicum.java_kanban.util.ManagerSaveException;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.logging.Logger;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T> {
     private final Path filename;
-    private Logger logger = Logger.getLogger(FileBackedTaskManager.class.getName());
-
 
     public FileBackedTaskManager(Path filename) {
         super();
@@ -25,7 +24,6 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
 
     private void load() {
         try (BufferedReader br = new BufferedReader(new FileReader(filename.toFile()))) {
-            //read first line with table names
             br.readLine();
             String tmpLine;
             while ((tmpLine = br.readLine()) != null) {
@@ -35,8 +33,11 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
                     idCounter.set(task.getId());
                 }
             }
-        } catch (Exception e) {
+            tasks.values().forEach(task -> updateTask(task));
+        } catch (IOException | ManagerSaveException e) {
             throw new ManagerSaveException(e.getMessage(), e.getCause());
+        } catch (IntersectionException e) {
+            throw new IntersectionException(e.getMessage(), e.getCause());
         }
     }
 
@@ -47,23 +48,35 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
         String name = data[2];
         TaskStatus taskStatus = TaskStatus.valueOf(data[3]);
         String description = data[4];
+        LocalDateTime startTime = LocalDateTime.parse(data[5]);
         T resultTusk = switch (taskType) {
             case SUBTASK: {
-                Long epicId = Long.parseLong(data[5]);
-                Epic epic = tasks.containsKey(epicId) ? (Epic) tasks.get(epicId) : new Epic(name, description, epicId);
-                Subtask subtask = new Subtask(name, description, epic, id);
+                Long epicId = Long.parseLong(data[data.length - 1]);
+                Epic epic = (Epic) tasks.get(epicId);
+                Subtask subtask = new Subtask(name, description, epic);
+                subtask.setId(id);
+                if (epic != null) {
+                    epic.addSubtask(subtask);
+                }
                 yield (T) subtask;
             }
             case EPIC:
-                yield (T) new Epic(name, description, id);
-
-            case TASK: {
-                yield (T) new Task(name, description, id);
-            }
+                Epic epic = new Epic(name, description);
+                epic.setId(id);
+                yield (T) epic;
+            case TASK:
+                Task task = new Task(name, description);
+                task.setId(id);
+                yield (T) task;
             default:
                 throw new DeserializationException("Unknown task type: " + taskType);
         };
+        resultTusk.setStartTime(startTime);
         resultTusk.setStatus(taskStatus);
+        if (taskStatus.equals(TaskStatus.DONE)) {
+            resultTusk.setDuration(Duration.ofMinutes(Long.parseLong(data[6])));
+        }
+
         return resultTusk;
     }
 
@@ -73,13 +86,13 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
                 Files.createFile(filename);
             }
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename.toFile()))) {
-                bw.write("id,type,name,status,description,epic");
+                bw.write("id,type,name,status,description,startTime,duration,epic");
                 bw.newLine();
                 StringBuilder sb = new StringBuilder();
-                for (Map.Entry<Long, T> entry : tasks.entrySet()) {
+                tasks.entrySet().forEach(entry -> {
                     sb.append(entry.getValue().toCsv());
                     sb.append("\n");
-                }
+                });
                 bw.write(sb.toString());
             }
         } catch (IOException e) {
@@ -119,20 +132,8 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
     }
 
     @Override
-    public void updateTask(Task t) {
+    public void updateTask(T t) {
         super.updateTask(t);
-        save();
-    }
-
-    @Override
-    public void updateSubtask(Subtask t) {
-        super.updateSubtask(t);
-        save();
-    }
-
-    @Override
-    public void updateEpic(Epic t) {
-        super.updateEpic(t);
         save();
     }
 }
