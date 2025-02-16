@@ -11,7 +11,7 @@ public class Managers {
     private static final HistoryManager historyManager = new InMemoryHistoryManager();
     private static final TaskManager inMemoryTaskManager = new InMemoryTaskManager();
     private static TaskManager fileBackedTaskManager;
-    public final static Path PATH = Paths.get("defaultFileManagerTest.txt");
+    public static final Path PATH = Paths.get("defaultFileManagerTest.txt");
 
     private Managers() {
     }
