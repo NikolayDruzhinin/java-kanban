@@ -2,6 +2,7 @@ package ru.yandex.practicum.java_kanban.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Epic extends Task {
@@ -85,13 +86,7 @@ public class Epic extends Task {
         if (status.equals(TaskStatus.IN_PROGRESS)) {
             startTime = subtasks.stream()
                     .filter(s -> s.getStartTime() != null)
-                    .min((task1, task2) -> {
-                        if (task1.getStartTime().equals(task2.getStartTime())) {
-                            return 0;
-                        } else {
-                            return task1.getStartTime().isBefore(task2.getStartTime()) ? 1 : -1;
-                        }
-                    })
+                    .min(Comparator.comparing(Task::getStartTime))
                     .get().getStartTime();
         }
     }

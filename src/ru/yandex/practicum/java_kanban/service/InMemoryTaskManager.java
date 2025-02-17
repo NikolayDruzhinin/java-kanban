@@ -19,13 +19,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
     public InMemoryTaskManager() {
         idCounter = new AtomicLong(0);
         tasks = new HashMap<>();
-        prioritizedTasks = new TreeSet<>((task1, task2) -> {
-            if (task1.getStartTime().equals(task2.getStartTime())) {
-                return 0;
-            } else {
-                return task1.getStartTime().isBefore(task2.getStartTime()) ? 1 : -1;
-            }
-        });
+        prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     }
 
     @Override

@@ -18,11 +18,15 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
         super();
         this.filename = filename;
         if (Files.exists(filename)) {
-            load();
+            try {
+                load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private void load() {
+    private void load() throws IOException, ManagerSaveException, IntersectionException {
         try (BufferedReader br = new BufferedReader(new FileReader(filename.toFile()))) {
             br.readLine();
             String tmpLine;
@@ -34,10 +38,6 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
                 }
             }
             tasks.values().forEach(task -> updateTask(task));
-        } catch (IOException | ManagerSaveException e) {
-            throw new ManagerSaveException(e.getMessage(), e.getCause());
-        } catch (IntersectionException e) {
-            throw new IntersectionException(e.getMessage(), e.getCause());
         }
     }
 
