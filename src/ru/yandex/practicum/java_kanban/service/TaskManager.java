@@ -27,9 +27,7 @@ public interface TaskManager<T extends Task> {
 
     void createTask(T t);
 
-    void updateTask(Task t);
+    void updateTask(T t);
 
-    void updateSubtask(Subtask t);
-
-    void updateEpic(Epic t);
+    List<T> getPrioritizedTasks();
 }

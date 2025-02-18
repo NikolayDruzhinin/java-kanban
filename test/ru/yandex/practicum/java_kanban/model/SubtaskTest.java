@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.java_kanban.service.TaskManager;
 import ru.yandex.practicum.java_kanban.util.Managers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubtaskTest {
 
