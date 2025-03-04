@@ -35,8 +35,8 @@ public class HttpTaskServer {
         logger.info("HTTP-server is running on " + PORT);
     }
 
-    public static void stop() {
-        httpServer.stop(0);
+    public static void stop(int delay) {
+        httpServer.stop(delay);
         logger.info("HTTP-server is stopped");
     }
 }
