@@ -1,10 +1,11 @@
 package ru.yandex.practicum.java_kanban.service;
 
+import ru.yandex.practicum.java_kanban.exception.IntersectionException;
+import ru.yandex.practicum.java_kanban.exception.NotFoundException;
 import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.model.Task;
 import ru.yandex.practicum.java_kanban.model.TaskStatus;
-import ru.yandex.practicum.java_kanban.util.IntersectionException;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -47,17 +48,21 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
     }
 
     @Override
-    public T getTask(long id) {
-        return tasks.get(id);
+    public T getTask(long id) throws NotFoundException {
+        T t = tasks.get(id);
+        if (t == null) {
+            throw new NotFoundException("Task with ID " + id + " not found");
+        }
+        return t;
     }
 
     @Override
-    public List<Subtask> getEpicSubtasks(long id) {
+    public List<Subtask> getEpicSubtasks(long id) throws NotFoundException {
         T epic = tasks.get(id);
-        if (epic instanceof Epic) {
-            return new ArrayList<>(((Epic) epic).getSubtasks());
+        if (epic == null || !(epic instanceof Epic)) {
+            throw new NotFoundException("Epic with ID " + id + " not found");
         }
-        return null;
+        return new ArrayList<>(((Epic) epic).getSubtasks());
     }
 
     @Override
@@ -89,8 +94,9 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
     }
 
     @Override
-    public void removeTask(T task) {
-        if (tasks.containsKey(task.getId())) {
+    public void removeTask(long id) throws NotFoundException {
+        T task = tasks.get(id);
+        if (tasks.containsKey(id)) {
             tasks.remove(task.getId());
             prioritizedTasks.remove(task);
             if (task instanceof Subtask tmpSubtask) {
@@ -102,7 +108,16 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
                 ((Epic) task).getSubtasks().forEach(Subtask::removeEpic);
                 ((Epic) task).removeSubtasks();
             }
+        } else {
+            throw new NotFoundException(task + " not found");
         }
+    }
+
+    public void clear() {
+        removeTasks();
+        removeSubtasks();
+        removeEpics();
+        idCounter.set(0);
     }
 
     @Override
@@ -123,7 +138,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
     }
 
     @Override
-    public void updateTask(T task) {
+    public void updateTask(T task) throws NotFoundException {
         long id = task.getId();
         if (tasks.containsKey(id)) {
             if (task.getStatus().equals(TaskStatus.DONE)) {
@@ -146,7 +161,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
                 prioritizedTasks.add(task);
             }
         } else {
-            logger.warning("Can't update task, task with id = " + id + " not exists");
+            throw new NotFoundException(task + " not found");
         }
     }
 
@@ -155,7 +170,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         return prioritizedTasks.stream().toList();
     }
 
-    private void checkIsTaskIntersect(T task) {
+    private void checkIsTaskIntersect(T task) throws IntersectionException {
         prioritizedTasks.stream()
                 .filter(t -> t.getStatus().equals(TaskStatus.DONE) && !t.equals(task))
                 .forEach(t -> {

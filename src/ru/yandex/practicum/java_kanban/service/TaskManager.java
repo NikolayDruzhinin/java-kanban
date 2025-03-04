@@ -23,7 +23,9 @@ public interface TaskManager<T extends Task> {
 
     void removeEpics();
 
-    void removeTask(T t);
+    void clear();
+
+    void removeTask(long id);
 
     void createTask(T t);
 

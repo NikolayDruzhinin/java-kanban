@@ -3,6 +3,7 @@ package ru.yandex.practicum.java_kanban.service;
 import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Task;
 import ru.yandex.practicum.java_kanban.util.CustomLinkedList;
+import ru.yandex.practicum.java_kanban.util.Node;
 
 import java.util.List;
 
@@ -34,6 +35,15 @@ public class InMemoryHistoryManager<T extends Task> implements HistoryManager<T>
             epic.getSubtasks().forEach(subtask -> taskHistory.remove(subtask.getId()));
         }
         taskHistory.remove(id);
+    }
+
+    @Override
+    public void clear() {
+        Node head = taskHistory.getHead();
+        while (head != null) {
+            taskHistory.remove(head.task.getId());
+            head = head.next;
+        }
     }
 
 }
