@@ -2,8 +2,7 @@ package ru.yandex.practicum.java_kanban.server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.java_kanban.HttpTaskServer;
 import ru.yandex.practicum.java_kanban.model.Epic;
@@ -38,20 +37,15 @@ public class Tests<T extends Task> {
             .setPrettyPrinting()
             .create();
 
-    @BeforeAll
-    protected static void start() {
-        HttpTaskServer.start();
-
-    }
-
     @BeforeEach
     protected void clear() {
         inMemoryTaskManager.clear();
         historyManager.clear();
+        HttpTaskServer.start();
     }
 
-    @AfterAll
-    protected static void stop() {
+    @AfterEach
+    protected void stop() {
         HttpTaskServer.stop();
     }
 
