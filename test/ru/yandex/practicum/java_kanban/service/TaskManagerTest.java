@@ -3,6 +3,7 @@ package ru.yandex.practicum.java_kanban.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.java_kanban.exception.IntersectionException;
+import ru.yandex.practicum.java_kanban.exception.NotFoundException;
 import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.model.Task;
@@ -145,10 +146,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNull(subtask2.getEpic());
         assertNull(epic1.getSubtask(subtask2.getId()));
         assertEquals(epic1.getStatus(), TaskStatus.NEW);
-        assertNull(taskManager.getTask(subtask2.getId()));
+        assertThrowsExactly(NotFoundException.class, () -> taskManager.getTask(subtask2.getId()));
 
         taskManager.removeTask(epic2.getId());
-        assertNull(taskManager.getTask(epic2.getId()));
+        assertThrowsExactly(NotFoundException.class, () -> taskManager.getTask(epic2.getId()));
     }
 
     @Test

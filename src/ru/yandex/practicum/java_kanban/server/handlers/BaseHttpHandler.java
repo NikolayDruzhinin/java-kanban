@@ -18,10 +18,12 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 public abstract class BaseHttpHandler<T extends Task> implements HttpHandler {
     protected static final TaskManager inMemoryTaskManager = Managers.getDefaultInMemoryManager();
     protected static final HistoryManager historyManager = Managers.getDefaultHistoryManager();
+    private static final Logger logger = Logger.getLogger(BaseHttpHandler.class.getName());
     protected Gson gson;
 
     public BaseHttpHandler() {
@@ -94,10 +96,10 @@ public abstract class BaseHttpHandler<T extends Task> implements HttpHandler {
                     break;
             }
         } catch (NotFoundException | NumberFormatException e) {
-            e.printStackTrace();
+            logger.warning(e.getMessage());
             sendNotFound(exchange);
         } catch (IntersectionException e) {
-            e.printStackTrace();
+            logger.warning(e.getMessage());
             sendHasInteractions(exchange);
         }
     }
