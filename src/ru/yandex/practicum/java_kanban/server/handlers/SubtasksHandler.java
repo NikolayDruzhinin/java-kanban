@@ -10,12 +10,18 @@ import ru.yandex.practicum.java_kanban.exception.NotFoundException;
 import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.server.type_tokens.SubtaskTypeToken;
+import ru.yandex.practicum.java_kanban.service.HistoryManager;
+import ru.yandex.practicum.java_kanban.service.TaskManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class SubtasksHandler extends BaseHttpHandler<Subtask> implements HttpHandler {
+    public SubtasksHandler(TaskManager taskManager, HistoryManager historyManager) {
+        super(taskManager, historyManager);
+    }
+
     @Override
     protected void processPost(HttpExchange exchange, String[] splitPath) throws IOException, NotFoundException, IntersectionException {
         String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);

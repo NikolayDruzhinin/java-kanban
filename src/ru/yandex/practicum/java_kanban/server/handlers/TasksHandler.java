@@ -9,12 +9,18 @@ import ru.yandex.practicum.java_kanban.exception.IntersectionException;
 import ru.yandex.practicum.java_kanban.exception.NotFoundException;
 import ru.yandex.practicum.java_kanban.model.Task;
 import ru.yandex.practicum.java_kanban.server.type_tokens.TaskTypeToken;
+import ru.yandex.practicum.java_kanban.service.HistoryManager;
+import ru.yandex.practicum.java_kanban.service.TaskManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class TasksHandler extends BaseHttpHandler<Task> implements HttpHandler {
+
+    public TasksHandler(TaskManager taskManager, HistoryManager historyManager) {
+        super(taskManager, historyManager);
+    }
 
     @Override
     protected void processGet(HttpExchange exchange, String[] splitPath) throws IOException, NotFoundException {

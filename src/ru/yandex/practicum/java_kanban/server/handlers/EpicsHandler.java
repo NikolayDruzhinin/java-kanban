@@ -11,6 +11,8 @@ import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.server.type_tokens.EpicTypeToken;
 import ru.yandex.practicum.java_kanban.server.type_tokens.SubtaskTypeToken;
+import ru.yandex.practicum.java_kanban.service.HistoryManager;
+import ru.yandex.practicum.java_kanban.service.TaskManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,16 +20,18 @@ import java.util.List;
 
 public class EpicsHandler extends BaseHttpHandler<Epic> implements HttpHandler {
 
+    public EpicsHandler(TaskManager taskManager, HistoryManager historyManager) {
+        super(taskManager, historyManager);
+    }
+
     @Override
     protected void processGet(HttpExchange exchange, String[] splitPath) throws IOException, NotFoundException {
-        if (splitPath.length >= 3) {
-            Epic epic = (Epic) inMemoryTaskManager.getTask(Long.parseLong(splitPath[2]));
-            if (splitPath.length == 4) {
-                List<Subtask> subtasks = epic.getSubtasks();
-                sendText(exchange, gson.toJson(subtasks, new SubtaskTypeToken().getType()));
-            } else {
-                sendText(exchange, gson.toJson(epic));
-            }
+        Epic epic = (Epic) inMemoryTaskManager.getTask(Long.parseLong(splitPath[2]));
+        if (splitPath.length == 4) {
+            List<Subtask> subtasks = epic.getSubtasks();
+            sendText(exchange, gson.toJson(subtasks, new SubtaskTypeToken().getType()));
+        } else if (splitPath.length == 3) {
+            sendText(exchange, gson.toJson(epic));
         } else {
             List<Epic> epics = inMemoryTaskManager.getEpics();
             sendText(exchange, gson.toJson(epics, new EpicTypeToken().getType()));

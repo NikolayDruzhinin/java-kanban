@@ -11,7 +11,6 @@ import ru.yandex.practicum.java_kanban.server.adapters.DurationTypeAdapter;
 import ru.yandex.practicum.java_kanban.server.adapters.LocalDateTimeAdapter;
 import ru.yandex.practicum.java_kanban.service.HistoryManager;
 import ru.yandex.practicum.java_kanban.service.TaskManager;
-import ru.yandex.practicum.java_kanban.util.Managers;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,18 +20,20 @@ import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 public abstract class BaseHttpHandler<T extends Task> implements HttpHandler {
-    protected static final TaskManager inMemoryTaskManager = Managers.getDefaultInMemoryManager();
-    protected static final HistoryManager historyManager = Managers.getDefaultHistoryManager();
+    protected final TaskManager inMemoryTaskManager;
+    protected final HistoryManager historyManager;
     private static final Logger logger = Logger.getLogger(BaseHttpHandler.class.getName());
     protected Gson gson;
 
-    public BaseHttpHandler() {
+    public BaseHttpHandler(TaskManager taskManager, HistoryManager historyManager) {
         super();
         gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
                 .setPrettyPrinting()
                 .create();
+        inMemoryTaskManager = taskManager;
+        this.historyManager = historyManager;
     }
 
     protected void sendText(HttpExchange exchange, String text) throws IOException {

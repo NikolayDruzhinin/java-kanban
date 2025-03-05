@@ -2,6 +2,7 @@ package ru.yandex.practicum.java_kanban.server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.java_kanban.HttpTaskServer;
 import ru.yandex.practicum.java_kanban.model.Epic;
@@ -27,24 +28,35 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Tests<T extends Task> {
-    protected final TaskManager inMemoryTaskManager = Managers.getDefaultInMemoryManager();
-    protected final HistoryManager historyManager = Managers.getDefaultHistoryManager();
-    protected final HttpClient client = HttpClient.newHttpClient();
-    protected final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-            .setPrettyPrinting()
-            .create();
+    protected final TaskManager inMemoryTaskManager;
+    protected final HistoryManager historyManager;
+    protected final HttpClient client;
+    protected final HttpTaskServer httpTaskServer;
+    protected final Gson gson;
 
-
-    static {
-        HttpTaskServer.start();
+    public Tests() {
+        inMemoryTaskManager = Managers.getDefaultInMemoryManager();
+        historyManager = Managers.getDefaultHistoryManager();
+        client = HttpClient.newHttpClient();
+        httpTaskServer = new HttpTaskServer(8080, inMemoryTaskManager, historyManager);
+        gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                .setPrettyPrinting()
+                .create();
     }
+
 
     @BeforeEach
     protected void clear() {
         inMemoryTaskManager.clear();
         historyManager.clear();
+        httpTaskServer.start();
+    }
+
+    @AfterEach
+    protected void stop() {
+        httpTaskServer.stop(0);
     }
 
     public void createTest(T t) {
