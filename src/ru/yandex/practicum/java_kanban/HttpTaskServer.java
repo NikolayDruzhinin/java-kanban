@@ -12,12 +12,12 @@ import java.util.logging.Logger;
 public class HttpTaskServer {
     private static final Logger logger = Logger.getLogger(HttpTaskServer.class.getName());
     private final HttpServer httpServer;
-    private final int PORT;
+    private final int port;
 
     public HttpTaskServer(int port, TaskManager taskManager, HistoryManager historyManager) {
-        PORT = port;
+        this.port = port;
         try {
-            httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+            httpServer = HttpServer.create(new InetSocketAddress(port), 0);
         } catch (IOException e) {
             logger.severe(e.getMessage());
             throw new RuntimeException(e);
@@ -34,7 +34,7 @@ public class HttpTaskServer {
 
     public void start() {
         httpServer.start();
-        logger.info("HTTP-server is running on port " + PORT);
+        logger.info("HTTP-server is running on port " + port);
     }
 
     public void stop(int delay) {
