@@ -2,11 +2,12 @@ package ru.yandex.practicum.java_kanban.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.java_kanban.exception.IntersectionException;
+import ru.yandex.practicum.java_kanban.exception.NotFoundException;
 import ru.yandex.practicum.java_kanban.model.Epic;
 import ru.yandex.practicum.java_kanban.model.Subtask;
 import ru.yandex.practicum.java_kanban.model.Task;
 import ru.yandex.practicum.java_kanban.model.TaskStatus;
-import ru.yandex.practicum.java_kanban.util.IntersectionException;
 
 import java.util.List;
 
@@ -136,19 +137,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.updateTask(subtask2);
         assertEquals(epic1.getStatus(), TaskStatus.IN_PROGRESS);
 
-        taskManager.removeTask(subtask1);
+        taskManager.removeTask(subtask1.getId());
         assertNull(subtask1.getEpic());
         assertNull(epic1.getSubtask(subtask1.getId()));
         assertEquals(epic1.getStatus(), TaskStatus.DONE);
 
-        taskManager.removeTask(subtask2);
+        taskManager.removeTask(subtask2.getId());
         assertNull(subtask2.getEpic());
         assertNull(epic1.getSubtask(subtask2.getId()));
         assertEquals(epic1.getStatus(), TaskStatus.NEW);
-        assertNull(taskManager.getTask(subtask2.getId()));
+        assertThrowsExactly(NotFoundException.class, () -> taskManager.getTask(subtask2.getId()));
 
-        taskManager.removeTask(epic2);
-        assertNull(taskManager.getTask(epic2.getId()));
+        taskManager.removeTask(epic2.getId());
+        assertThrowsExactly(NotFoundException.class, () -> taskManager.getTask(epic2.getId()));
     }
 
     @Test

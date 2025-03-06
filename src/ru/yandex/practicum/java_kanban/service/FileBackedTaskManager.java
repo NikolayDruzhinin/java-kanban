@@ -1,9 +1,9 @@
 package ru.yandex.practicum.java_kanban.service;
 
+import ru.yandex.practicum.java_kanban.exception.DeserializationException;
+import ru.yandex.practicum.java_kanban.exception.IntersectionException;
+import ru.yandex.practicum.java_kanban.exception.ManagerSaveException;
 import ru.yandex.practicum.java_kanban.model.*;
-import ru.yandex.practicum.java_kanban.util.DeserializationException;
-import ru.yandex.practicum.java_kanban.util.IntersectionException;
-import ru.yandex.practicum.java_kanban.util.ManagerSaveException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -120,8 +120,8 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
     }
 
     @Override
-    public void removeTask(T task) {
-        super.removeTask(task);
+    public void removeTask(long id) {
+        super.removeTask(id);
         save();
     }
 
@@ -132,8 +132,8 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
     }
 
     @Override
-    public void updateTask(T t) {
-        super.updateTask(t);
+    public void updateTask(T task) {
+        super.updateTask(task);
         save();
     }
 }

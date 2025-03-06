@@ -9,5 +9,7 @@ public interface HistoryManager<T extends Task> {
 
     void remove(Long id);
 
+    void clear();
+
     List<T> getHistory();
 }

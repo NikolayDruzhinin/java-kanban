@@ -1,4 +1,4 @@
-package ru.yandex.practicum.java_kanban.util;
+package ru.yandex.practicum.java_kanban.exception;
 
 public class IntersectionException extends RuntimeException {
     public IntersectionException(final String msg) {
